@@ -16,6 +16,6 @@ powershell.exe -noprofile -executionpolicy bypass -file .\CorporateBranding.ps1
 
 Load the detection script to your app BrandingDetection.ps1
 
-##Credits
+## Credits
 
 This branding app is based off of https://github.com/mtniehaus/AutopilotBranding
