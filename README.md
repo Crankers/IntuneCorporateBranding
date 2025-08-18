@@ -7,9 +7,7 @@ This uses the Microsoft Win32 Content Prep Tool (a.k.a. IntuneWinAppUtil.exe, av
 
 ## Building
 Replace the Background.jpg and LockScreen.jpg
-
 Run the makeapp.cmd file from a command prompt
-
 The detection rule script is generated and named BrandingDetection.ps1
 
 ## Using
