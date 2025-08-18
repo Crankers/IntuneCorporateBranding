@@ -1,38 +1,4 @@
-<#PSScriptInfo
-.VERSION 3.2.1
-.GUID 39efc9c5-7b51-4d1f-b650-0f3818e5327a
-.AUTHOR Michael Niehaus
-.COMPANYNAME
-.COPYRIGHT Copyright (c) 2025 Michael Niehaus
-.TAGS intune endpoint autopilot branding windows
-.LICENSEURI https://github.com/mtniehaus/AutopilotBranding/blob/main/LICENSE
-.PROJECTURI https://github.com/mtniehaus/AutopilotBranding
-.ICONURI
-.EXTERNALMODULEDEPENDENCIES
-.REQUIREDSCRIPTS
-.EXTERNALSCRIPTDEPENDENCIES
-.RELEASENOTES
-v1.0.0 - 2019-04-16 - Created initial version as an MSI
-v1.0.1 - 2019-04-18 - Added additional features for languages and features on demand
-v2.0.0 - 2020-05-18 - Converted from an MSI to a Win32 app
-v2.0.1 - 2020-05-26 - Added logic to remove the Edge desktop icon
-v2.0.2 - 2020-08-11 - Added time zone logic
-v2.0.3 - 2023-09-24 - Improved start layout support for Windows 11
-v2.0.4 - 2024-01-31 - Improved logging
-v2.0.5 - 2024-06-01 - Added logic to hide "Learn about this picture" and related Spotlight stuff
-v2.0.6 - 2024-08-15 - Added logic to update OneDrive with the machine-wide installer
-v2.0.7 - 2024-09-14 - Added logic to install the Microsoft.Windows.Sense.Client (for MDE) if it was missing
-v2.0.8 - 2024-12-27 - Updated for Windows 11 taskbar, added support for removing/disabling Windows features
-v3.0.0 - 2025-04-17 - Lots of improvements and additions based on feedback
-v3.0.1 - 2025-04-18 - Fixed OneDriveSetup bugs
-v3.0.2 - 2025-04-19 - Added a -Force option when installing the Update-InboxApp script; added -AllUsers when removing provisioned in-box apps
-v3.0.3 - 2025-05-02 - Additional fixes based on user feedback; tweaked script formatting; added FSIA, desktop switch logic
-v3.0.4 - 2025-05-02 - Fixed FSIA default (should be 0)
-v3.0.5 - 2025-05-14 - Remove logic that removed widgets, cross-device app.
-v3.1.0 - 2025-06-01 - Modified WinGet logic, switched to PowerShell for creating package
-v3.2.0 - 2025-07-15 - Various fixes (start menu layout, apps, etc.)
-v3.2.1 - 2025-07-15 - Updated makeapps.cmd to use PowerShell 7
-#>
+
 
 function Log() {
 	[CmdletBinding()]
@@ -83,15 +49,15 @@ if ("$env:PROCESSOR_ARCHITEW6432" -ne "ARM64") {
 }
 
 # Create output folder
-if (-not (Test-Path "$($env:ProgramData)\Microsoft\AutopilotBranding")) {
-	Mkdir "$($env:ProgramData)\Microsoft\AutopilotBranding" -Force
+if (-not (Test-Path "$($env:ProgramData)\Microsoft\CorporateBrandingBranding")) {
+	Mkdir "$($env:ProgramData)\Microsoft\CorporateBrandingBranding" -Force
 }
 
 # Start logging
-Start-Transcript "$($env:ProgramData)\Microsoft\AutopilotBranding\AutopilotBranding.log"
+Start-Transcript "$($env:ProgramData)\Microsoft\CorporateBrandingBranding\CorporateBrandingBranding.log"
 
 # Creating tag file
-Set-Content -Path "$($env:ProgramData)\Microsoft\AutopilotBranding\AutopilotBranding.ps1.tag" -Value "Installed"
+Set-Content -Path "$($env:ProgramData)\Microsoft\CorporateBrandingBranding\CorporateBrandingBranding.ps1.tag" -Value "Installed"
 
 # PREP: Load the Config.xml
 $installFolder = "$PSScriptRoot\"
@@ -138,13 +104,13 @@ if ($ci.OsBuildNumber -le 22000) {
 # STEP 2: Configure background
 if ($config.Config.SkipTheme -ine "true") {
 	Log "Setting up Autopilot theme"
-	Mkdir "C:\Windows\Resources\OEM Themes" -Force | Out-Null
-	Copy-Item "$installFolder\Autopilot.theme" "C:\Windows\Resources\OEM Themes\Autopilot.theme" -Force
-	Mkdir "C:\Windows\web\wallpaper\Autopilot" -Force | Out-Null
-	Copy-Item "$installFolder\Autopilot.jpg" "C:\Windows\web\wallpaper\Autopilot\Autopilot.jpg" -Force
+	Mkdir "C:\Windows\Resources\Themes" -Force | Out-Null
+	Copy-Item "$installFolder\CorporateBranding.theme" "C:\Windows\Resources\Themes\CorporateBranding.theme" -Force
+	Mkdir "C:\Windows\web\wallpaper\CorporateBranding" -Force | Out-Null
+	Copy-Item "$installFolder\BackGround.jpg" "C:\Windows\web\wallpaper\CorporateBranding\BackGround.jpg" -Force
 	Log "Setting Autopilot theme as the new user default"
-	& reg.exe add "HKLM\TempUser\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /v InstallTheme /t REG_EXPAND_SZ /d "%SystemRoot%\resources\OEM Themes\Autopilot.theme" /f /reg:64 2>&1 | Out-Null
-	& reg.exe add "HKLM\TempUser\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /v CurrentTheme /t REG_EXPAND_SZ /d "%SystemRoot%\resources\OEM Themes\Autopilot.theme" /f /reg:64 2>&1 | Out-Null
+	& reg.exe add "HKLM\TempUser\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /v InstallTheme /t REG_EXPAND_SZ /d "%SystemRoot%\resources\Themes\CorporateBranding.theme" /f /reg:64 2>&1 | Out-Null
+	& reg.exe add "HKLM\TempUser\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes" /v CurrentTheme /t REG_EXPAND_SZ /d "%SystemRoot%\resources\Themes\CorporateBranding.theme" /f /reg:64 2>&1 | Out-Null
 } else {
 	Log "Skipping Autopilot theme"
 }
@@ -153,8 +119,8 @@ if ($config.Config.SkipTheme -ine "true") {
 if ($config.Config.SkipLockScreen -ine "true") {
 	Log "Configuring lock screen image"
 	$RegPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP"
-	$LockScreenImage = "C:\Windows\web\wallpaper\Autopilot\AutopilotLock.jpg"
-	Copy-Item "$installFolder\AutopilotLock.jpg" $LockScreenImage -Force
+	$LockScreenImage = "C:\Windows\web\wallpaper\CorporateBranding\LockScreen.jpg"
+	Copy-Item "$installFolder\LockScreen.jpg" $LockScreenImage -Force
 	if (!(Test-Path -Path $RegPath)) {
 		New-Item -Path $RegPath -Force | Out-Null
 	}
