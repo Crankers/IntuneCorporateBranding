@@ -1,25 +1,26 @@
 # Microsoft Intune Branding
+This repository provides a sample PowerShell script designed to customize Windows 11 devices using Microsoft Intune. 
 
-This repository contains a sample PowerShell script that can be packaged into an Intune Win32 app to customize Windows 11 devices via Microsoft Intune
+The script can be packaged as a Win32 app for deployment via Intune.
 
-## Requirements and Dependencies
-This uses the Microsoft Win32 Content Prep Tool (a.k.a. IntuneWinAppUtil.exe, available from https://github.com/Microsoft/Microsoft-Win32-Content-Prep-Tool) to package the PowerShell script and related files into a .intunewin file that can be uploaded to Intune as a Win32 app. 
+## 📦 Requirements
+Uses the Microsoft Win32 Content Prep Tool (IntuneWinAppUtil.exe) to package the PowerShell script and assets into a .intunewin file.
 
-## Building
-Replace the Background.jpg and LockScreen.jpg
+Download the tool from: Microsoft-Win32-Content-Prep-Tool
 
-Run the makeapp.cmd file from a command prompt
+## 🛠️ Setup Instructions
+Replace Background.jpg and LockScreen.jpg with your custom branding images.
 
-The detection rule script is generated and named BrandingDetection.ps1
+Run makeapp.cmd from a command prompt to build the .intunewin package.
 
-## Using
-Add the resulting Win32 app (.intunewin) and BrandingDetection.ps1 to Intune.  
+The detection script BrandingDetection.ps1 will be automatically generated.
 
-The installation command line should be:
+## 🚀 Deployment
+Upload the .intunewin package and BrandingDetection.ps1 to Intune.
+
+Use the following install command:
 
 powershell.exe -noprofile -executionpolicy bypass -file .\CorporateBranding.ps1
-
-Load the detection script to your app BrandingDetection.ps1
 
 ## Credits
 
