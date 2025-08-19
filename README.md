@@ -13,9 +13,10 @@ Run the makeapp.cmd file from a command prompt
 The detection rule script is generated and named BrandingDetection.ps1
 
 ## Using
-Add the resulting Win32 app (.intunewin) to Intune.  
+Add the resulting Win32 app (.intunewin) and BrandingDetection.ps1 to Intune.  
 
 The installation command line should be:
+
 powershell.exe -noprofile -executionpolicy bypass -file .\CorporateBranding.ps1
 
 Load the detection script to your app BrandingDetection.ps1
